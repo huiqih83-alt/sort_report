@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>氣泡排序法 (Bubble Sort) 詳解</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --code-bg: #282c34;
+            --code-text: #abb2bf;
+        }
+
+        body {
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 15px;
+        }
+
+        h1 { text-align: center; border: none; }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .highlight {
+            background-color: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* 偽代碼區塊樣式 */
+        .code-block {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment { color: #5c6370; font-style: italic; }
+        .code-keyword { color: #c678dd; }
+        .code-func { color: #61afef; }
+
+        .complexity-box {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .card b {
+            display: block;
+            font-size: 1.2em;
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>氣泡排序法 (Bubble Sort)</h1>
+    <hr>
+
+    <section class="section">
+        <h2>一、運作原理</h2>
+        <p>
+            <b>氣泡排序法</b> 透過連續比較相鄰的兩個元素，並根據大小關係交換位置。每一輪完整的掃描後，該輪次中「最大」的元素會像氣泡一樣浮動到陣列的最末端。
+        </p>
+    </section>
+
+    <section class="section">
+        <h2>二、運作過程圖解</h2>
+        <p>範例陣列：<code>[5, 3, 8, 4, 2]</code></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>輪次</th>
+                    <th>排序結果</th>
+                    <th>說明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Initial</td>
+                    <td>[5, 3, 8, 4, 2]</td>
+                    <td>初始狀態</td>
+                </tr>
+                <tr>
+                    <td>Pass 1</td>
+                    <td>[3, 5, 4, 2, <b>8</b>]</td>
+                    <td>8 移至正確位置</td>
+                </tr>
+                <tr>
+                    <td>Pass 2</td>
+                    <td>[3, 4, 2, <b>5, 8</b>]</td>
+                    <td>5 移至正確位置</td>
+                </tr>
+                <tr>
+                    <td>Pass 3</td>
+                    <td>[3, 2, <b>4, 5, 8</b>]</td>
+                    <td>4 移至正確位置</td>
+                </tr>
+                <tr>
+                    <td>Pass 4</td>
+                    <td>[<b>2, 3, 4, 5, 8</b>]</td>
+                    <td>排序完成</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="section">
+        <h2>三、演算法偽代碼 (Pseudocode)</h2>
+        <div class="code-block">
+            <span class="code-keyword">procedure</span> <span class="code-func">bubbleSort</span>(A : list of sortable items)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;n := length(A)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">repeat</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swapped := <span class="code-keyword">false</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">for</span> i := 1 <span class="code-keyword">to</span> n-1 <span class="code-keyword">do</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// 如果左邊比右邊大</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">if</span> A[i-1] > A[i] <span class="code-keyword">then</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// 交換位置</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swap(A[i-1], A[i])<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swapped := <span class="code-keyword">true</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end if</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end for</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// 如果這一輪都沒有交換，代表已經排好了</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">until not</span> swapped<br>
+            <span class="code-keyword">end procedure</span>
+        </div>
+        <p>上述偽代碼加入了 <code>swapped</code> 標記（Flag），這可以讓演算法在資料已經排序完成時提前結束，提高效率。</p>
+    </section>
+
+    <section class="section">
+        <h2>四、複雜度分析</h2>
+        <div class="complexity-box">
+            <div class="card">
+                <p>最佳時間複雜度</p>
+                <b>O(n)</b>
+            </div>
+            <div class="card">
+                <p>平均時間複雜度</p>
+                <b>O(n²)</b>
+            </div>
+            <div class="card">
+                <p>最差時間複雜度</p>
+                <b>O(n²)</b>
+            </div>
+            <div class="card">
+                <p>空間複雜度</p>
+                <b>O(1)</b>
+            </div>
+        </div>
+    </section>
+</div>
+
+</body>
+</html>
