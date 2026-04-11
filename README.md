@@ -1,7 +1,7 @@
 # sort_report# 排序演算法效能分析報告
 
 這是一個使用 C 語言實作並分析五種排序演算法的專案。
-file:///C:/JYW/JYWPYPY/sort_report/index.html
+
 ## 實作演算法
 * 冒泡排序 (Bubble Sort)
 * 快速排序 (Quick Sort) ... (列出你的五種)
