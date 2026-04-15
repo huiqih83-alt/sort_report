@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合併排序法 (Merge Sort) 詳解</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #9b59b6; /* 合併排序改用紫色系區分 */
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --code-bg: #282c34;
+            --code-text: #abb2bf;
+        }
+
+        body {
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 15px;
+        }
+
+        h1 { text-align: center; border: none; }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .highlight {
+            background-color: #f5eef8;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment { color: #5c6370; font-style: italic; }
+        .code-keyword { color: #c678dd; }
+        .code-func { color: #61afef; }
+
+        .complexity-box {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .card b {
+            display: block;
+            font-size: 1.2em;
+            color: var(--secondary-color);
+        }
+
+        .step-box {
+            background: #f9f9f9;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            margin: 5px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>合併排序法 (Merge Sort)</h1>
+    <hr>
+
+    <section class="section">
+        <h2>一、運作原理</h2>
+        <p>
+            <b>合併排序法</b> 採用了「分治法」(Divide and Conquer) 的策略。其運作分為兩個主要階段：
+        </p>
+        <div class="highlight">
+            <ol>
+                <li><b>分割 (Divide)：</b>將原始陣列不斷從中間對切，直到每個子陣列只剩下一個元素（此時每個子陣列都視為已排序）。</li>
+                <li><b>合併 (Merge)：</b>將兩個已排序的子陣列合併成一個更大的已排序陣列，直到合併回原始大小。</li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>二、運作過程圖解</h2>
+        <p>範例：<code>[38, 27, 43, 3]</code></p>
+        <div class="step-box"><b>[38, 27, 43, 3]</b> (分割)</div>
+        <div class="step-box">[38, 27] | [43, 3] (分割)</div>
+        <div class="step-box">[38] | [27] | [43] | [3] (最底層)</div>
+        <div class="step-box">[27, 38] | [3, 43] (第一次合併)</div>
+        <div class="step-box"><b>[3, 27, 38, 43]</b> (最終合併完成)</div>
+    </section>
+
+    <section class="section">
+        <h2>三、演算法偽代碼 (Pseudocode)</h2>
+        <p>合併排序通常使用遞迴實作：</p>
+        <div class="code-block">
+            <span class="code-keyword">procedure</span> <span class="code-func">mergeSort</span>(A : list of items)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">if</span> length(A) <= 1 <span class="code-keyword">return</span> A<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;mid := length(A) / 2<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;left := <span class="code-func">mergeSort</span>(left half of A)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;right := <span class="code-func">mergeSort</span>(right half of A)<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">return</span> <span class="code-func">merge</span>(left, right)<br>
+            <span class="code-keyword">end procedure</span><br><br>
+            <span class="code-comment">// 合併兩個有序陣列的邏輯</span><br>
+            <span class="code-keyword">procedure</span> <span class="code-func">merge</span>(left, right)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">while</span> left and right are not empty<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">if</span> left[0] <= right[0]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;append left[0] to result, remove from left<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">else</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;append right[0] to result, remove from right<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end while</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">append</span> remaining items to result<br>
+            <span class="code-keyword">end procedure</span>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>四、複雜度分析</h2>
+        <div class="complexity-box">
+            <div class="card">
+                <p>最佳時間複雜度</p>
+                <b>O(n log n)</b>
+            </div>
+            <div class="card">
+                <p>平均時間複雜度</p>
+                <b>O(n log n)</b>
+            </div>
+            <div class="card">
+                <p>最差時間複雜度</p>
+                <b>O(n log n)</b>
+            </div>
+            <div class="card">
+                <p>空間複雜度</p>
+                <b>O(n)</b>
+                <small>(需要額外空間存放合併結果)</small>
+            </div>
+        </div>
+        <p style="margin-top: 20px;">
+            <b>穩定性：</b> 合併排序是一種 <b>穩定排序 (Stable Sort)</b>。其最大的優點在於時間複雜度極其穩定，不受輸入資料排列順序影響。唯一的缺點是需要額外的記憶體空間。
+        </p>
+    </section>
+</div>
+
+</body>
+</html>

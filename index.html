@@ -3,209 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>氣泡排序法 (Bubble Sort) 詳解</title>
+    <title>排序演算法教學中心</title>
     <style>
         :root {
             --primary-color: #2c3e50;
-            --secondary-color: #3498db;
             --bg-color: #f4f7f6;
             --text-color: #333;
-            --code-bg: #282c34;
-            --code-text: #abb2bf;
+            --bubble-color: #3498db;
+            --selection-color: #e67e22;
+            --insertion-color: #e74c3c;
+            --merge-color: #1abc9c;
+            --shell-color: #9b59b6;
         }
 
         body {
             font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
             line-height: 1.6;
             color: var(--text-color);
-            background-color: var(--bg-color);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
             max-width: 900px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        h1, h2 {
-            color: var(--primary-color);
-            border-left: 5px solid var(--secondary-color);
-            padding-left: 15px;
-        }
-
-        h1 { text-align: center; border: none; }
-
-        .section {
-            margin-bottom: 40px;
-        }
-
-        .highlight {
-            background-color: #e8f4fd;
-            padding: 15px;
-            border-radius: 5px;
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        table {
             width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
+            background: #fff;
+            padding: 60px 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
 
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-
-        th, td {
-            padding: 12px;
+        h1 {
+            color: var(--primary-color);
             text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border: none;
+            padding: 0;
         }
 
-        th {
-            background-color: var(--secondary-color);
-            color: white;
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 50px;
         }
 
-        /* 偽代碼區塊樣式 */
-        .code-block {
-            background-color: var(--code-bg);
-            color: var(--code-text);
-            padding: 20px;
-            border-radius: 5px;
-            font-family: 'Courier New', Courier, monospace;
-            overflow-x: auto;
-            line-height: 1.5;
+        .intro {
+            text-align: center;
+            color: #555;
+            margin-bottom: 50px;
+            line-height: 1.8;
         }
 
-        .code-comment { color: #5c6370; font-style: italic; }
-        .code-keyword { color: #c678dd; }
-        .code-func { color: #61afef; }
-
-        .complexity-box {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 20px;
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 30px;
+            margin-top: 40px;
         }
 
         .card {
             background: #fff;
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 8px;
-            width: 200px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 30px;
             text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 380px;
         }
 
-        .card b {
-            display: block;
-            font-size: 1.2em;
-            color: var(--secondary-color);
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .card-icon {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            line-height: 1;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .bubble-card {
+            border-top: 4px solid var(--bubble-color);
+        }
+
+        .bubble-card .card-title {
+            color: var(--bubble-color);
+        }
+
+        .selection-card {
+            border-top: 4px solid var(--selection-color);
+        }
+
+        .selection-card .card-title {
+            color: var(--selection-color);
+        }
+
+        .insertion-card {
+            border-top: 4px solid var(--insertion-color);
+        }
+
+        .insertion-card .card-title {
+            color: var(--insertion-color);
+        }
+
+        .merge-card {
+            border-top: 4px solid var(--merge-color);
+        }
+
+        .merge-card .card-title {
+            color: var(--merge-color);
+        }
+
+        .shell-card {
+            border-top: 4px solid var(--shell-color);
+        }
+
+        .shell-card .card-title {
+            color: var(--shell-color);
+        }
+
+        .card-description {
+            font-size: 0.95em;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: auto;
+        }
+
+        .btn-bubble {
+            background-color: var(--bubble-color);
+            color: white;
+        }
+
+        .btn-bubble:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-selection {
+            background-color: var(--selection-color);
+            color: white;
+        }
+
+        .btn-selection:hover {
+            background-color: #d35400;
+        }
+
+        .btn-insertion {
+            background-color: var(--insertion-color);
+            color: white;
+        }
+
+        .btn-insertion:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-merge {
+            background-color: var(--merge-color);
+            color: white;
+        }
+
+        .btn-merge:hover {
+            background-color: #16a085;
+        }
+
+        .btn-shell {
+            background-color: var(--shell-color);
+            color: white;
+        }
+
+        .btn-shell:hover {
+            background-color: #8e44ad;
+        }
+
+        @media (max-width: 1024px) {
+            .cards-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>氣泡排序法 (Bubble Sort)</h1>
-    <hr>
+    <h1>📚 排序演算法教學中心</h1>
+    <p class="subtitle">探索經典的排序演算法</p>
+    
+    <p class="intro">
+        歡迎來到排序演算法教學中心！這裡提供詳細的排序演算法講解。<br>
+        選擇一個演算法進行深入學習，包括原理、實例演示和複雜度分析。
+    </p>
 
-    <section class="section">
-        <h2>一、運作原理</h2>
-        <p>
-            <b>氣泡排序法</b> 透過連續比較相鄰的兩個元素，並根據大小關係交換位置。每一輪完整的掃描後，該輪次中「最大」的元素會像氣泡一樣浮動到陣列的最末端。
-        </p>
-    </section>
+    <div class="cards-container">
+        <!-- 氣泡排序卡片 -->
+        <a href="bubble_sort.html" class="card bubble-card">
+            <div class="card-icon">🫧</div>
+            <div class="card-title">氣泡排序法</div>
+            <p class="card-description">
+                Bubble Sort 是一種簡單直觀的排序演算法。<br>
+                透過連續比較相鄰元素，讓較大的元素逐步「浮」向陣列末端。
+            </p>
+            <button class="btn btn-bubble">進入課程 →</button>
+        </a>
 
-    <section class="section">
-        <h2>二、運作過程圖解</h2>
-        <p>範例陣列：<code>[5, 3, 8, 4, 2]</code></p>
-        <table>
-            <thead>
-                <tr>
-                    <th>輪次</th>
-                    <th>排序結果</th>
-                    <th>說明</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Initial</td>
-                    <td>[5, 3, 8, 4, 2]</td>
-                    <td>初始狀態</td>
-                </tr>
-                <tr>
-                    <td>Pass 1</td>
-                    <td>[3, 5, 4, 2, <b>8</b>]</td>
-                    <td>8 移至正確位置</td>
-                </tr>
-                <tr>
-                    <td>Pass 2</td>
-                    <td>[3, 4, 2, <b>5, 8</b>]</td>
-                    <td>5 移至正確位置</td>
-                </tr>
-                <tr>
-                    <td>Pass 3</td>
-                    <td>[3, 2, <b>4, 5, 8</b>]</td>
-                    <td>4 移至正確位置</td>
-                </tr>
-                <tr>
-                    <td>Pass 4</td>
-                    <td>[<b>2, 3, 4, 5, 8</b>]</td>
-                    <td>排序完成</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
+        <!-- 選擇排序卡片 -->
+        <a href="selection_sort.html" class="card selection-card">
+            <div class="card-icon">🎯</div>
+            <div class="card-title">選擇排序法</div>
+            <p class="card-description">
+                Selection Sort 通過在未排序部分中找出最小值，<br>
+                逐次將其移到已排序部分，直到整個陣列排序完成。
+            </p>
+            <button class="btn btn-selection">進入課程 →</button>
+        </a>
 
-    <section class="section">
-        <h2>三、演算法偽代碼 (Pseudocode)</h2>
-        <div class="code-block">
-            <span class="code-keyword">procedure</span> <span class="code-func">bubbleSort</span>(A : list of sortable items)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;n := length(A)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">repeat</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swapped := <span class="code-keyword">false</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">for</span> i := 1 <span class="code-keyword">to</span> n-1 <span class="code-keyword">do</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// 如果左邊比右邊大</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">if</span> A[i-1] > A[i] <span class="code-keyword">then</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// 交換位置</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swap(A[i-1], A[i])<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swapped := <span class="code-keyword">true</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end if</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end for</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// 如果這一輪都沒有交換，代表已經排好了</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">until not</span> swapped<br>
-            <span class="code-keyword">end procedure</span>
-        </div>
-        <p>上述偽代碼加入了 <code>swapped</code> 標記（Flag），這可以讓演算法在資料已經排序完成時提前結束，提高效率。</p>
-    </section>
+        <!-- 插入排序卡片 -->
+        <a href="insertion_sort.html" class="card insertion-card">
+            <div class="card-icon">📥</div>
+            <div class="card-title">插入排序法</div>
+            <p class="card-description">
+                Insertion Sort 通過不斷將新元素插入已排序部分，<br>
+                維持陣列的排序狀態，直到所有元素都被插入。
+            </p>
+            <button class="btn btn-insertion">進入課程 →</button>
+        </a>
 
-    <section class="section">
-        <h2>四、複雜度分析</h2>
-        <div class="complexity-box">
-            <div class="card">
-                <p>最佳時間複雜度</p>
-                <b>O(n)</b>
-            </div>
-            <div class="card">
-                <p>平均時間複雜度</p>
-                <b>O(n²)</b>
-            </div>
-            <div class="card">
-                <p>最差時間複雜度</p>
-                <b>O(n²)</b>
-            </div>
-            <div class="card">
-                <p>空間複雜度</p>
-                <b>O(1)</b>
-            </div>
-        </div>
-    </section>
+        <!-- 合併排序卡片 -->
+        <a href="merge_sort.html" class="card merge-card">
+            <div class="card-icon">🔀</div>
+            <div class="card-title">合併排序法</div>
+            <p class="card-description">
+                Merge Sort 採用分治法，將陣列遞歸分割，<br>
+                然後將排序完的子陣列合併回一個完整的排序陣列。
+            </p>
+            <button class="btn btn-merge">進入課程 →</button>
+        </a>
+
+        <!-- 希爾排序卡片 -->
+        <a href="shell_sort.html" class="card shell-card">
+            <div class="card-icon">🐚</div>
+            <div class="card-title">希爾排序法</div>
+            <p class="card-description">
+                Shell Sort 是插入排序的推廣版本，<br>
+                使用遞減間隙序列來逐步縮小排序的跨度，提高效率。
+            </p>
+            <button class="btn btn-shell">進入課程 →</button>
+        </a>
+    </div>
 </div>
 
 </body>

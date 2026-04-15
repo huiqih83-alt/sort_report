@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>希爾排序法 (Shell Sort) 詳解</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #f1c40f; /* 希爾排序使用金色/黃色系區分 */
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --code-bg: #282c34;
+            --code-text: #abb2bf;
+        }
+
+        body {
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 15px;
+        }
+
+        h1 { text-align: center; border: none; }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .highlight {
+            background-color: #fef9e7;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: #333;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment { color: #5c6370; font-style: italic; }
+        .code-keyword { color: #c678dd; }
+        .code-func { color: #61afef; }
+
+        .complexity-box {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .card b {
+            display: block;
+            font-size: 1.2em;
+            color: #d4ac0d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>希爾排序法 (Shell Sort)</h1>
+    <hr>
+
+    <section class="section">
+        <h2>一、運作原理</h2>
+        <p>
+            <b>希爾排序法</b> 是插入排序的改良版。插入排序在對「幾乎已排序」的資料操作時效率極高，但每次只能移動一個位置，效率受限。
+        </p>
+        <p class="highlight">
+            希爾排序透過設定一個「增量（Gap）」，將原始陣列分割成數個子序列，分別對這些子序列進行插入排序。隨著演算法進行，增量會逐漸縮小，直到增量為 1 時，最後執行一次完整的插入排序。
+        </p>
+    </section>
+
+    <section class="section">
+        <h2>二、運作過程圖解</h2>
+        <p>範例陣列：<code>[8, 9, 1, 7, 2, 3, 5, 4]</code> (n=8)</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>階段</th>
+                    <th>增量 (Gap)</th>
+                    <th>分組與操作</th>
+                    <th>結果</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>第一階段</td>
+                    <td>gap = 4</td>
+                    <td>比較 (8,2), (9,3), (1,5), (7,4) 並交換</td>
+                    <td>[2, 3, 1, 4, 8, 9, 5, 7]</td>
+                </tr>
+                <tr>
+                    <td>第二階段</td>
+                    <td>gap = 2</td>
+                    <td>比較距離為 2 的元素並進行插入排序</td>
+                    <td>[1, 3, 2, 4, 5, 7, 8, 9]</td>
+                </tr>
+                <tr>
+                    <td>第三階段</td>
+                    <td>gap = 1</td>
+                    <td>標準插入排序（此時陣列已基本有序）</td>
+                    <td>[1, 2, 3, 4, 5, 7, 8, 9]</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><i>*註：希爾排序顯著減少了長距離移動元素的次數。</i></p>
+    </section>
+
+    <section class="section">
+        <h2>三、演算法偽代碼 (Pseudocode)</h2>
+        <div class="code-block">
+            <span class="code-keyword">procedure</span> <span class="code-func">shellSort</span>(A : list of items)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;n := length(A)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;gap := n / 2<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">while</span> gap > 0 <span class="code-keyword">do</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">for</span> i := gap <span class="code-keyword">to</span> n - 1 <span class="code-keyword">do</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;temp := A[i]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j := i<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// 進行組內插入排序</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">while</span> j >= gap <span class="code-keyword">and</span> A[j - gap] > temp <span class="code-keyword">do</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[j] := A[j - gap]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j := j - gap<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end while</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[j] := temp<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end for</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gap := gap / 2 <span class="code-comment">// 縮小增量</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end while</span><br>
+            <span class="code-keyword">end procedure</span>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>四、複雜度分析</h2>
+        <div class="complexity-box">
+            <div class="card">
+                <p>最佳時間複雜度</p>
+                <b>O(n log n)</b>
+            </div>
+            <div class="card">
+                <p>平均時間複雜度</p>
+                <b>O(n<sup>1.3</sup>) ~ O(n²)</b>
+                <small>(取決於增量序列)</small>
+            </div>
+            <div class="card">
+                <p>最差時間複雜度</p>
+                <b>O(n²)</b>
+            </div>
+            <div class="card">
+                <p>空間複雜度</p>
+                <b>O(1)</b>
+            </div>
+        </div>
+        <p style="margin-top: 20px;">
+            <b>穩定性：</b> 希爾排序是一種 <b>不穩定排序 (Unstable Sort)</b>。由於相同的元素可能會被分到不同的組別中進行插入排序，它們的相對順序可能會在排序過程中被改變。
+        </p>
+    </section>
+</div>
+
+</body>
+</html>

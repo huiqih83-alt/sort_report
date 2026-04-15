@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插入排序法 (Insertion Sort) 詳解</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #27ae60; /* 插入排序改用綠色系區分 */
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --code-bg: #282c34;
+            --code-text: #abb2bf;
+        }
+
+        body {
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 15px;
+        }
+
+        h1 { text-align: center; border: none; }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .highlight {
+            background-color: #eafaf1;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .code-comment { color: #5c6370; font-style: italic; }
+        .code-keyword { color: #c678dd; }
+        .code-func { color: #61afef; }
+
+        .complexity-box {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .card b {
+            display: block;
+            font-size: 1.2em;
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>插入排序法 (Insertion Sort)</h1>
+    <hr>
+
+    <section class="section">
+        <h2>一、運作原理</h2>
+        <p>
+            <b>插入排序法</b> 將資料分為「已排序」與「未排序」兩部分。最初，已排序部分只包含第一個元素。
+        </p>
+        <p class="highlight">
+            演算法會逐一取回未排序部分的元素，並從右向左掃描已排序的部分，將該元素「插入」到正確的位置。在移動過程中，所有比該元素大的數都會向右移動一個位置。
+        </p>
+    </section>
+
+    <section class="section">
+        <h2>二、運作過程圖解</h2>
+        <p>範例陣列：<code>[12, 11, 13, 5, 6]</code></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>輪次</th>
+                    <th>待插入元素</th>
+                    <th>排序過程與結果</th>
+                    <th>說明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>初始</td>
+                    <td>-</td>
+                    <td>[<b>12</b>, 11, 13, 5, 6]</td>
+                    <td>第一個元素視為已排序</td>
+                </tr>
+                <tr>
+                    <td>Pass 1</td>
+                    <td>11</td>
+                    <td>[<b>11, 12</b>, 13, 5, 6]</td>
+                    <td>11 比 12 小，移到 12 前面</td>
+                </tr>
+                <tr>
+                    <td>Pass 2</td>
+                    <td>13</td>
+                    <td>[<b>11, 12, 13</b>, 5, 6]</td>
+                    <td>13 比 12 大，位置不變</td>
+                </tr>
+                <tr>
+                    <td>Pass 3</td>
+                    <td>5</td>
+                    <td>[<b>5, 11, 12, 13</b>, 6]</td>
+                    <td>5 插入到數列最前面</td>
+                </tr>
+                <tr>
+                    <td>Pass 4</td>
+                    <td>6</td>
+                    <td>[<b>5, 6, 11, 12, 13</b>]</td>
+                    <td>6 插入到 5 和 11 之間</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><i>*註：粗體部分代表目前已排好序的範圍。</i></p>
+    </section>
+
+    <section class="section">
+        <h2>三、演算法偽代碼 (Pseudocode)</h2>
+        <div class="code-block">
+            <span class="code-keyword">procedure</span> <span class="code-func">insertionSort</span>(A : list of items)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">for</span> i := 1 <span class="code-keyword">to</span> length(A) - 1 <span class="code-keyword">do</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key := A[i] <span class="code-comment">// 選擇當前要插入的元素</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j := i - 1<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">// 與左側已排序部分的元素比較</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">while</span> j >= 0 <span class="code-keyword">and</span> A[j] > key <span class="code-keyword">do</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[j + 1] := A[j] <span class="code-comment">// 將較大的元素向右移</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j := j - 1<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end while</span><br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[j + 1] := key <span class="code-comment">// 插入正確位置</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">end for</span><br>
+            <span class="code-keyword">end procedure</span>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>四、複雜度分析</h2>
+        <div class="complexity-box">
+            <div class="card">
+                <p>最佳時間複雜度</p>
+                <b>O(n)</b>
+                <small>(當資料已排序時)</small>
+            </div>
+            <div class="card">
+                <p>平均時間複雜度</p>
+                <b>O(n²)</b>
+            </div>
+            <div class="card">
+                <p>最差時間複雜度</p>
+                <b>O(n²)</b>
+            </div>
+            <div class="card">
+                <p>空間複雜度</p>
+                <b>O(1)</b>
+                <small>(原地
